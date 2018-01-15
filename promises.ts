@@ -25,5 +25,3 @@ const obs = Observable.fromPromise(
     (err) => {
         console.log(" Reject 2 because " + err)
     })
-
-
