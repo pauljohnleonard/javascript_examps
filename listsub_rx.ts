@@ -1,55 +1,73 @@
 'use strict'
-import { Observable, bindCallback, from ,pipe ,of, forkJoin} from 'rxjs';
-import { mergeMap,map,mergeAll } from 'rxjs/operators';
+import { Observable, bindCallback, from, pipe, of, forkJoin } from 'rxjs';
+import { mergeMap, map, mergeAll, take, bufferCount, concat, merge, concatAll, concatMap, delay } from 'rxjs/operators';
 
-
-// import { filter} from 'rxjs/operators';
-
-// const squareOdd = of(1, 2, 3, 4, 5)
-//   .pipe(
-//     filter(n => n % 2 !== 0),
-//     map(n => n * n)
-//   );
-
-// Subscribe to get values
-// squareOdd.subscribe(x => console.log(x));
+// Use name space toavoid duplicate names. 
 namespace A {
-    // e.g. s3 operation  
 
+    // e.g. s3 operation  
     function asyncFunc(item, cb) {
-        const wait = 1000;
+        const wait = (6 - item) * 300;
+        console.log(" DO " + item)
         setTimeout(() => {
-            console.log(" DOING " + item)
-            cb(item*item)
+            console.log(" DONE " + item)
+            cb(item * item)
         }, wait);
     }
 
     const mySyncObserable = bindCallback(asyncFunc);
 
-    //mySyncObs(5).subscribe((res)=>console.log(res));
-
     let list = [1, 2, 3, 4, 5, 6]
 
-    forkJoin(from(list).pipe( mergeMap(i=>mySyncObserable(i)) )).subscribe((res)=>{console.log("ALL")})
+    let ii:string = "forEach";
 
-   // from(list).pipe( mergeMap(i=>mySyncObs(i)) ).subscribe((res)=>{console.log(" ALL ")})
+    switch (ii) {
+
+        // forEach + subscribe
+        case "forEach":  // Simle subscription (all in parallel)
+            list.forEach((i) => mySyncObserable(i).subscribe(res => console.log("HELLO ", res)));
+            break;
+
+        // pipe    
+        case "pipe1": // showing how a pipe works.  
+            from(list).pipe(map(i => { console.log(i); return i ** 2 }), map(i => i / 2)).subscribe(res => console.log(" HELLO", res));
+            break;
+
+        case "pipe2": // create observable form i in the pipe ( but it does not get used !!!!)
+            from(list).pipe(map(i => { console.log("IN ", i); return mySyncObserable(i) })).subscribe(res => console.log(" HELLO", res));
+            break;
+
+        // mergeMap to resolve obserable in the pipe
+        case "mergeMap": // Use mergeMap to put the return val from mySyncObservable into the pipe  (no gain over 0 yet)
+            from(list).pipe(mergeMap(i => { console.log("IN ", i); return mySyncObserable(i) })).subscribe(res => console.log(" HELLO", res));
+            break;
+
+        // mergeAll  to limit number of subscriptions
+        case "mergeAll1": // Put the observeable into the pipe line. mergeAll subscribes but does not return control to pipe unit it is resolved.
+            from(list).pipe(map(i => { console.log("IN ", i); return mySyncObserable(i) }), mergeAll(1)).subscribe(res => console.log(" HELLO", res));
+            break;
+
+        case "mergeAll3": // Put the observeable into the pipe line. mergeAll subscribes to at most 3 then blocks until one is resolved.
+            from(list).pipe(map(i => { console.log("IN ", i); return mySyncObserable(i) }), mergeAll(3)).subscribe(res => console.log(" HELLO", res));
+            break;
 
 
-    //forkJoin(from(list).pipe( i=>mySyncObs(i))).subscribe((res)=>{console.log(" ALL ")})
+        // concatMap
+        case "concatMap":  // One at a time.  subscription see each result  
+            from(list).pipe(concatMap((i) => { return mySyncObserable(i) })).subscribe((res) => { console.log("HELLO", res) })
+            break;
 
 
-//     //from(list).subscribe((item) => {console.log(item)})
+        // forkJoin   is used to wait for all the subsciptions to resolve.
+
+        case "forkJoin1": // One at a time. notify when finished using concatMap 
+            forkJoin(from(list).pipe(concatMap((i) => { return mySyncObserable(i) }))).subscribe((res) => { console.log("HELLO") })
+            break;
 
 
-   //   from(list).pipe(map(),mergeAll()).subscribe((res)=>console.log("ALL "+ res));  
-    
-    
-
-    
-//     // mergeMap<number>(item => mySyncObs(item)).subscribe((res)=> {console.log(res),console.log(" END ")})
-
-
-//     //from(list).pipe(mergeMap(item => item, 1))
-// }
+        case "forkJoin2":
+            forkJoin( from(list).pipe(  map((i)=>{return mySyncObserable(i)}), mergeAll(1)  )).subscribe((res)=>{console.log("HELLO",res)})
+            break;
+        }
 
 }
