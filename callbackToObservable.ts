@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 
 function methodWithCallback(arg0, arg1, cb) {
     setTimeout(function() {

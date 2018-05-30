@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Rx'
+import { Observable } from 'rxjs/Observable'
 import { AsyncSubject } from 'rxjs/AsyncSubject'
 import { Subject } from 'rxjs/Subject';
 

@@ -4,9 +4,11 @@
   "description": "",
   "main": "examp1.js",
   "dependencies": {
-    "rxjs": ""
+    "rxjs": "^5.5.11"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/node": "^10.1.4"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
