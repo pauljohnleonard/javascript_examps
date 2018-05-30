@@ -4,7 +4,7 @@
   "description": "",
   "main": "examp1.js",
   "dependencies": {
-    "rxjs": "^5.4.3"
+    "rxjs": "^5.5.11"
   },
   "devDependencies": {},
   "scripts": {

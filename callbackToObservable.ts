@@ -2,8 +2,9 @@ import { Observable } from 'rxjs/Rx';
 
 function methodWithCallback(arg0, arg1, cb) {
     setTimeout(function() {
-      cb(arg0 + arg1);
-    }, 2000);
+      console.log("A")
+      cb(arg0 );
+    }, 200);
   }
   
 var newMethod = Observable.bindCallback(methodWithCallback);
