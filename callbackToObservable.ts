@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable, bindCallback } from 'rxjs';
 
 function methodWithCallback(arg0, arg1, cb) {
     setTimeout(function() {
@@ -7,6 +7,6 @@ function methodWithCallback(arg0, arg1, cb) {
     }, 200);
   }
   
-var newMethod = Observable.bindCallback(methodWithCallback);
+var newMethod = bindCallback(methodWithCallback);
   
 newMethod(2,3).subscribe( (res) => console.log(res) )

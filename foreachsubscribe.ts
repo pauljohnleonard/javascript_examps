@@ -1,35 +1,41 @@
-import { Observable } from 'rxjs/Observable'
-import { AsyncSubject } from 'rxjs/AsyncSubject'
-import { Subject } from 'rxjs/Subject';
+import { Observable, from } from 'rxjs'
+import { AsyncSubject } from 'rxjs'
+import { Subject } from 'rxjs';
+import { mergeMap, timeout } from 'rxjs/operators';
 
 const data = [5, 4, 3, 2, 1]
 
-const src = Observable.from(data)
+const src = from(data)
 
 const obs = new Subject()
 
 let mess = ""
 
-src.mergeMap(
-    t => timeOut(t)
-).subscribe(
-    d => mess += d + "\n",
-    err => console.log("ERROR"),
-    () => {
-        obs.next(mess)
-      //  obs.complete()
-    }
+src.pipe(
+
+    mergeMap(
+        (t: number) => {
+            return timeout(t);
+        }
+    )
+    ).subscribe(
+        d => mess += d + "\n",
+        err => console.log("ERROR"),
+        () => {
+            obs.next(mess)
+            //  obs.complete()
+        }
     )
 
 obs.subscribe((message) =>
-    console.log(message)
-)
+        console.log(message)
+    )
 
 function timeOut(t: number): Observable<any> {
-    const wait = new AsyncSubject();
-    setTimeout(() => {
-        wait.next(t)
-        wait.complete()
-    }, t * 300)
-    return wait
-} 
+        const wait = new AsyncSubject();
+        setTimeout(() => {
+            wait.next(t)
+            wait.complete()
+        }, t * 300)
+        return wait
+    } 
