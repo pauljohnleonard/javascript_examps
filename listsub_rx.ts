@@ -30,7 +30,7 @@ namespace A {
 
         // pipe    
         case "pipe1": // showing how a pipe works.  
-            from(list).pipe(map(i => { console.log(i); return i ** 2 }), map(i => i / 2)).subscribe(res => console.log(" HELLO", res));
+            from(list).pipe(map(i => { console.log("IN" , i); return i ** 2 }), map(i => i / 2)).subscribe(res => console.log(" HELLO", res));
             break;
 
         case "pipe2": // create observable form i in the pipe ( but it does not get used !!!!)

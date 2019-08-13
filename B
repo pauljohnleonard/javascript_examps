@@ -1,0 +1,4 @@
+line 1
+line 2  modify B
+line 4
+line 5 B
