@@ -4,6 +4,7 @@
   "description": "",
   "main": "examp1.js",
   "dependencies": {
+    "chalk": "^2.4.2",
     "rxjs": "",
     "rxjs-compat": "^6.5.2"
   },
