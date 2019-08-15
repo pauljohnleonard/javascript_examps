@@ -27,7 +27,7 @@ function getType(item) {
   switch (type) {
     case itemType.number:
     case itemType.string:
-      return { value: item };
+      return { isvalue: true, value:item };
     case itemType.array:
       return { array: true };
     case itemType.object:
@@ -45,7 +45,7 @@ function primitiveCheck(o, a, b) {
   Object.assign(all, b);
   Object.assign(all, o);
 
-  if (all.value) {
+  if (all.isvalue) {
     // any values
     if (all.object) {
       throw new Error(" item is value and object");
@@ -96,14 +96,14 @@ function makeMap(o, a, b) {
 
 
 function resolvePrimitive(entry,key,res,favor) {
-  if (entry.o.value) {
+  if (entry.o.isvalue) {
     // it existed in the ancestor
-    if (entry.b.value && entry.a.value) {
+    if (entry.b.isvalue && entry.a.isvalue) {
       // both versions have a value for this path
       if (entry.o.value === entry.a.value) {
         //   a not changed equal so take b
         res[key] = entry.b.value;
-      } else if (entry.o.value === entry.b.value) {
+      } else if (entry.o.isvalue === entry.b.isvalue) {
         res[key] = entry.a.value;
       } else if (favor === "a") {
         // here then both have changed
@@ -111,7 +111,7 @@ function resolvePrimitive(entry,key,res,favor) {
       } else if (favor === "b") {
         res[key] = entry.b.value;
       } else {
-        throw Error("entry.b.value && entry.a.value  has not been handled");
+        throw Error("entry.b.isvalue && entry.a.isvalue  has not been handled");
       }
     } else {
       // looks like one or more of the versions has been deleted
@@ -132,6 +132,9 @@ function resolvePrimitive(entry,key,res,favor) {
       }
     } 
   } else {   // here then it did not exist in original
+    if (entry.a.undefined) {
+        res[key]=entry.
+    }
 
   }
 }
@@ -155,9 +158,9 @@ function clone(o) {
 }
 
 function getTest(n) {
-  const o = { x: 1 };
-  const a = { x: 1 };
-  const b = { x: 2 };
+  const o:any = { x: 1 };
+  const a:any = { x: 1 };
+  const b:any = { x: 2 };
   const res = { x: 2 };
 
   const ret = { o: o, a: a, b: b, res: res };
@@ -165,13 +168,27 @@ function getTest(n) {
   if (n === 0) {
     return ret;
   }
+
+
+  a.item.title="X";
+  b.item.title="Y";
+
+  a.item.text="Blah Blah Blah";
+  b.item.text=" Oh no Oh no";
+
+
+
 }
 
 function doit1() {
   const test = getTest(0);
   const map = makeMap(test.o, test.a, test.b);
-  const out = resolveMap(map,"a");
+
   console.log(JSON.stringify(map, null, 2));
+
+  const out = resolveMap(map,"a");
+  
+  console.log(JSON.stringify(out, null, 2));
 }
 
 doit1();
